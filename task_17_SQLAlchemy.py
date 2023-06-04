@@ -49,12 +49,10 @@ Session = sessionmaker(bind=engine)
 session = Session()
 
 # Query for students who visited 'English' classes
-english_students_subquery = session.query(Student.id).\
-    join(Student.student_subject).\
-    join(StudentSubject.subject).\
-    filter(Subject.name == 'English').subquery()
-
-students = session.query(Student).filter(Student.id.in_(english_students_subquery)).all()
+students = session.query(Student).\
+    join(StudentSubject, Student.id == StudentSubject.student_id).\
+    join(Subject, StudentSubject.subject_id == Subject.id).\
+    filter(Subject.name == 'English').all()
 
 # Get the names of the students
 student_names = [student.name for student in students]
